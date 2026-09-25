@@ -1,0 +1,14 @@
+[
+  { "id": 1, "name": "Prakash Mishra", "technology": "MDO", "car": "Car 1", "room": "101" },
+  { "id": 2, "name": "Ananya Gupta", "technology": "MDO", "car": "Car 1", "room": "101" },
+  { "id": 3, "name": "Rohan Sharma", "technology": "MDC", "car": "Car 1", "room": "102" },
+  { "id": 4, "name": "Neha Verma", "technology": "MDC", "car": "Car 1", "room": "102" },
+  { "id": 5, "name": "Amit Kumar", "technology": "MDE", "car": "Car 2", "room": "103" },
+  { "id": 6, "name": "Simran Kaur", "technology": "MDE", "car": "Car 2", "room": "103" },
+  { "id": 7, "name": "Vikram Singh", "technology": "Other", "car": "Car 2", "room": "104" },
+  { "id": 8, "name": "Ishita Rao", "technology": "MDO", "car": "Car 2", "room": "104" },
+  { "id": 9, "name": "Karan Mehta", "technology": "MDC", "car": "Car 3", "room": "105" },
+  { "id": 10, "name": "Divya Nair", "technology": "MDE", "car": "Car 3", "room": "105" },
+  { "id": 11, "name": "Arjun Bhat", "technology": "Other", "car": "Car 3", "room": "105" },
+  { "id": 12, "name": "Meera Joshi", "technology": "MDO", "car": "Car 3", "room": "101" }
+]

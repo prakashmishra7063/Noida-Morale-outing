@@ -1,0 +1,12 @@
+{
+  "departure": {
+    "name": "Microsoft Noida Campus",
+    "address": "Advant Navis Business Park, Sector 142, Noida, Uttar Pradesh 201305",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Microsoft+Advant+Navis+Noida"
+  },
+  "destination": {
+    "name": "The Westin Sohna Resort & Spa",
+    "address": "Vatika Complex, Dhaula, Sohna-Gurgaon Road, Sohna, Haryana 122103",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=The+Westin+Sohna+Resort+%26+Spa"
+  }
+}

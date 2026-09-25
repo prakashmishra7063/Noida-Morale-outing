@@ -1,0 +1,13 @@
+{
+  "name": "The Westin Sohna Resort & Spa",
+  "address": "Vatika Complex, Dhaula, Sohna-Gurgaon Road, Sohna, Haryana 122103",
+  "mapsUrl": "https://www.google.com/maps/search/?api=1&query=The+Westin+Sohna+Resort+%26+Spa",
+  "checkIn": "03:00 PM",
+  "checkOut": "12:00 PM",
+  "phone": "+91 124 717 7777",
+  "website": "https://www.marriott.com/en-us/hotels/delwi-the-westin-sohna-resort-and-spa/",
+  "reference": "Microsoft Noida Morale Outing · Group booking",
+  "facilities": ["Swimming pool", "Spa & wellness", "Fitness studio", "Outdoor activities", "Wi-Fi"],
+  "meals": "Breakfast, lunch and dinner are included as per the group plan.",
+  "instructions": "Please carry a photo ID. Room keys will be distributed by the coordinator at check-in."
+}

@@ -1,0 +1,37 @@
+{
+  "name": "Microsoft Noida Morale Outing",
+  "date": "2026-10-17",
+  "departure": "Microsoft Noida Campus",
+  "departureTime": "05:30 AM",
+  "reportingTime": "05:00 AM",
+  "destination": "The Westin Sohna Resort & Spa",
+  "totalEmployees": 12,
+  "totalCars": 3,
+  "totalRooms": 5,
+  "importantInstructions": [
+    "Please arrive at the reporting point 30 minutes before departure.",
+    "Carry your Microsoft ID and a valid photo ID for hotel check-in.",
+    "Keep your phone charged and stay with your assigned car group."
+  ],
+  "emergencyContact": {
+    "name": "Outing coordinators",
+    "phone": "+91 98765 43210"
+  },
+  "schedule": [
+    { "day": "Day 1", "date": "17 October", "items": [
+      { "time": "05:00 AM", "title": "Report at Microsoft Noida", "detail": "Meet your car group at the main reception." },
+      { "time": "05:30 AM", "title": "Departure", "detail": "Cars leave together for the resort." },
+      { "time": "10:00 AM", "title": "Arrival & refreshments", "detail": "Check in your luggage with the coordinator." },
+      { "time": "01:00 PM", "title": "Lunch", "detail": "Buffet lunch at the all-day dining restaurant." },
+      { "time": "03:00 PM", "title": "Team activity", "detail": "Outdoor team games and free time." },
+      { "time": "07:00 PM", "title": "Dinner & bonfire", "detail": "An evening together under the stars." }
+    ]},
+    { "day": "Day 2", "date": "18 October", "items": [
+      { "time": "08:00 AM", "title": "Breakfast", "detail": "Breakfast service at the resort." },
+      { "time": "10:00 AM", "title": "Checkout", "detail": "Return keys and gather at the lobby." },
+      { "time": "10:30 AM", "title": "Leisure time", "detail": "Pool, spa, or a relaxed morning at the property." },
+      { "time": "01:00 PM", "title": "Lunch & departure", "detail": "Lunch followed by the return journey to Noida." },
+      { "time": "05:30 PM", "title": "Expected arrival in Noida", "detail": "Estimated arrival at Microsoft Noida Campus." }
+    ]}
+  ]
+}

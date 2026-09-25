@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Microsoft Noida Morale Outing team planning portal">
+  <title>Microsoft Noida Morale Outing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="Microsoft Noida Morale Outing home">
+        <span class="ms-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span><strong>Microsoft</strong><small>Noida Morale Outing</small></span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
+        <span></span><span></span><span></span><span class="sr-only">Open navigation</span>
+      </button>
+      <nav id="main-nav" class="main-nav" aria-label="Primary navigation">
+        <a href="#home" data-route="home">Home</a>
+        <a href="#location" data-route="location">Location</a>
+        <a href="#hotel" data-route="hotel">Hotel</a>
+        <a href="#rooms" data-route="rooms">Rooms</a>
+        <a href="#travel" data-route="travel">Travel</a>
+        <a href="#team" data-route="team">Team</a>
+        <a href="#event" data-route="event">Schedule</a>
+      </nav>
+    </header>
+
+    <main id="app" tabindex="-1"></main>
+
+    <footer class="site-footer">
+      <span class="ms-mark small" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span>Built for the Noida team · Keep this page handy on the road</span>
+      <span id="last-updated"></span>
+    </footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js" type="module"></script>
+</body>
+</html>

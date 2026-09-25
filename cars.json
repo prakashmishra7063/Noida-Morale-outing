@@ -1,0 +1,5 @@
+[
+  { "carNumber": "Car 1", "vehicleType": "SUV", "driver": "Prakash Mishra", "capacity": 4, "passengers": ["Ananya Gupta", "Rohan Sharma", "Neha Verma"], "pickupPoint": "Microsoft Noida · Main reception", "notes": "Leaves at 05:30 AM sharp" },
+  { "carNumber": "Car 2", "vehicleType": "SUV", "driver": "Amit Kumar", "capacity": 4, "passengers": ["Simran Kaur", "Vikram Singh", "Ishita Rao"], "pickupPoint": "Microsoft Noida · Main reception", "notes": "Keep luggage compact" },
+  { "carNumber": "Car 3", "vehicleType": "Sedan", "driver": "Karan Mehta", "capacity": 4, "passengers": ["Divya Nair", "Arjun Bhat", "Meera Joshi"], "pickupPoint": "Microsoft Noida · Main reception", "notes": "Coordinator car" }
+]

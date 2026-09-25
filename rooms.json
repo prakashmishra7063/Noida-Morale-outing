@@ -1,0 +1,7 @@
+[
+  { "roomNumber": "101", "type": "Triple", "capacity": 3, "members": ["Prakash Mishra", "Ananya Gupta", "Meera Joshi"], "notes": "West wing" },
+  { "roomNumber": "102", "type": "Double", "capacity": 2, "members": ["Rohan Sharma", "Neha Verma"] },
+  { "roomNumber": "103", "type": "Double", "capacity": 2, "members": ["Amit Kumar", "Simran Kaur"] },
+  { "roomNumber": "104", "type": "Double", "capacity": 2, "members": ["Vikram Singh", "Ishita Rao"] },
+  { "roomNumber": "105", "type": "Triple", "capacity": 3, "members": ["Karan Mehta", "Divya Nair", "Arjun Bhat"] }
+]
