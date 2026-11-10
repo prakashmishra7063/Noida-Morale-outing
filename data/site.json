@@ -114,6 +114,25 @@
       "lede": "A simple timeline for a relaxed, well-paced weekend together.",
       "emergencyTitle": "Need help during the trip?",
       "emergencyPrefix": "Contact"
+    },
+    "gallery": {
+      "navLabel": "Gallery",
+      "visible": true,
+      "eyebrow": "MEMORIES",
+      "title": "Photos & videos",
+      "lede": "Relive the weekend. Add your photos and videos, and browse everything the team has shared.",
+      "uploadTitle": "Share your photos & videos",
+      "uploadText": "Upload straight from your phone or laptop — original quality is kept. Ask the coordinators for the team code.",
+      "tips": [
+        "Only share photos your colleagues are comfortable with.",
+        "Large videos can take a few minutes — keep this page open until the upload finishes."
+      ],
+      "emptyText": "No photos yet — be the first to share one!",
+      "apiBase": "https://noida-morale-outing.vercel.app",
+      "showOnHome": true,
+      "homeTitle": "Share your memories",
+      "homeText": "Add your photos and videos from the outing to the team gallery.",
+      "homeButton": "Go to the gallery"
     }
   }
 }

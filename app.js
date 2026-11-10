@@ -1,5 +1,7 @@
+import { galleryBannerHtml, galleryPageHtml, initGallery } from "./gallery.js";
+
 const DATA_FILES = ["site", "event", "hotel", "locations", "employees", "rooms", "cars"];
-const ROUTES = ["home", "location", "hotel", "rooms", "travel", "team", "event"];
+const ROUTES = ["home", "location", "hotel", "rooms", "travel", "team", "event", "gallery"];
 const DRAFT_KEY = "noida-outing-draft";
 const IS_PREVIEW = new URLSearchParams(window.location.search).has("preview");
 const state = { site: {}, event: null, hotel: null, locations: null, employees: [], rooms: [], cars: [], route: "home" };
@@ -96,6 +98,7 @@ function renderHome() {
       <article class="panel instruction-panel"><div class="panel-title"><div><p class="eyebrow">${esc(p.infoEyebrow)}</p><h2>${esc(p.infoTitle)}</h2></div>${icon("info")}</div><ul class="instruction-list">${e.importantInstructions.map((item) => `<li>${icon("check")}<span>${esc(item)}</span></li>`).join("")}</ul>${p.infoLink ? `<a class="text-link" href="#event">${esc(p.infoLink)} ${icon("arrow")}</a>` : ""}</article>
     </div>
     <div class="route-banner"><div><p class="eyebrow">${esc(p.routeEyebrow)}</p><h2>${esc(e.departure)} <span>→</span> ${esc(e.destination)}</h2></div>${mapsButton(state.locations.destination.mapsUrl, p.routeButton)}</div>
+    ${galleryBannerHtml(page("gallery"))}
   </section>`;
 }
 
@@ -141,11 +144,13 @@ function teamTable(people) {
   if (!people.length) return emptyState(page("team").emptyText);
   return `<table><thead><tr><th>Employee</th><th>Technology</th><th>Car</th><th>Room</th><th></th></tr></thead><tbody>${people.map((person) => `<tr class="employee-link" data-person-id="${esc(person.id)}" tabindex="0"><td><div class="employee-cell">${avatar(person.name)}<b>${esc(person.name)}</b></div></td><td><span class="tech-tag ${techClass(person.technology)}">${esc(person.technology)}</span></td><td>${icon("car")} ${esc(carOf(person))}</td><td>${icon("bed")} ${esc(roomOf(person))}</td><td>${icon("arrow")}</td></tr>`).join("")}</tbody></table>`;
 }
+function renderGallery() { return galleryPageHtml(page("gallery"), headingFor("gallery")); }
 function renderEvent() {
   const p = page("event");
   const c = state.event.emergencyContact || {};
   return `<section class="page">${headingFor("event")}<div class="timeline">${state.event.schedule.map((day) => `<section class="day-block"><div class="day-heading"><span>${esc(day.day)}</span><b>${esc(day.date)}</b></div><div class="day-items">${day.items.map((item, index) => `<article class="timeline-item"><div class="timeline-time">${esc(item.time)}</div><div class="timeline-marker ${index === 0 ? "active" : ""}"></div><div class="timeline-copy"><h2>${esc(item.title)}</h2><p>${esc(item.detail)}</p></div></article>`).join("")}</div></section>`).join("")}</div><div class="emergency-banner"><span class="list-icon">${icon("phone")}</span><div><b>${esc(p.emergencyTitle)}</b><p>${esc(p.emergencyPrefix)} ${esc(c.name)} at <a href="tel:${esc(String(c.phone || "").replace(/\s/g, ""))}">${esc(c.phone)}</a>.</p></div></div></section>`;
 }
+
 
 function showEmployee(id) {
   const person = state.employees.find((item) => String(item.id) === String(id));
@@ -180,7 +185,7 @@ function render() {
   const route = window.location.hash.replace("#", "") || "home";
   const allowed = ROUTES.filter((r) => r === "home" || page(r).visible !== false);
   state.route = allowed.includes(route) ? route : "home";
-  const views = { home: renderHome, location: renderLocation, hotel: renderHotel, rooms: renderRooms, travel: renderTravel, team: renderTeam, event: renderEvent };
+  const views = { home: renderHome, location: renderLocation, hotel: renderHotel, rooms: renderRooms, travel: renderTravel, team: renderTeam, event: renderEvent, gallery: renderGallery };
   const scroll = window.scrollY;
   app.innerHTML = views[state.route]();
   document.querySelectorAll("[data-route]").forEach((link) => link.classList.toggle("active", link.dataset.route === state.route));
@@ -190,6 +195,7 @@ function render() {
   bindViewEvents();
 }
 function bindViewEvents() {
+  if (state.route === "gallery") initGallery(page("gallery"));
   const roomSearch = document.querySelector("#room-search");
   if (roomSearch) roomSearch.addEventListener("input", () => { const query = roomSearch.value.toLowerCase().trim(); const rooms = state.rooms.filter((room) => String(room.roomNumber).toLowerCase().includes(query) || room.members.some((name) => name.toLowerCase().includes(query))); document.querySelector("#rooms-list").innerHTML = roomCards(rooms); document.querySelector("#room-count").textContent = `${rooms.length} ${rooms.length === 1 ? "room" : "rooms"}`; });
   const carSearch = document.querySelector("#car-search");
