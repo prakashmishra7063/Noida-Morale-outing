@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Site Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" title="Open the website">
+      <span class="ms-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span><strong>Site editor</strong><small id="site-name">Loading…</small></span>
+    </a>
+    <span id="status" class="status">Loading…</span>
+    <div class="top-actions">
+      <button id="undo" class="btn ghost" type="button" title="Undo (Ctrl/⌘ Z)" disabled>↶ Undo</button>
+      <button id="redo" class="btn ghost" type="button" title="Redo (Ctrl/⌘ Shift Z)" disabled>↷ Redo</button>
+      <button id="toggle-preview" class="btn ghost" type="button">Preview</button>
+      <a class="btn ghost hide-sm" href="index.html" target="_blank" rel="noopener">Open site ↗</a>
+      <button id="primary" class="btn primary" type="button">Save</button>
+    </div>
+  </header>
+
+  <div class="workspace" id="workspace">
+    <nav class="sidebar" id="sidebar" aria-label="Editor sections"></nav>
+    <main class="editor" id="editor" tabindex="-1"></main>
+    <aside class="preview" id="preview" aria-label="Live preview">
+      <div class="preview-bar">
+        <b>Live preview</b>
+        <select id="preview-route" aria-label="Preview page"></select>
+        <div class="seg" role="group" aria-label="Preview device">
+          <button type="button" data-device="desktop" class="on">Desktop</button>
+          <button type="button" data-device="mobile">Mobile</button>
+        </div>
+        <button id="close-preview" class="btn ghost small close-preview" type="button" aria-label="Close preview">✕</button>
+      </div>
+      <div class="preview-stage" id="preview-stage">
+        <iframe id="preview-frame" title="Website preview" src="index.html?preview=1"></iframe>
+      </div>
+    </aside>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="admin.js" type="module"></script>
+</body>
+</html>
