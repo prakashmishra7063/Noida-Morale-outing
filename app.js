@@ -1,4 +1,4 @@
-import { galleryBannerHtml, galleryPageHtml, initGallery } from "./gallery.js";
+import { galleryBannerHtml, galleryPageHtml } from "./gallery.js";
 
 const DATA_FILES = ["site", "event", "hotel", "locations", "employees", "rooms", "cars"];
 const ROUTES = ["home", "location", "hotel", "rooms", "travel", "team", "event", "gallery"];
@@ -195,7 +195,6 @@ function render() {
   bindViewEvents();
 }
 function bindViewEvents() {
-  if (state.route === "gallery") initGallery(page("gallery"));
   const roomSearch = document.querySelector("#room-search");
   if (roomSearch) roomSearch.addEventListener("input", () => { const query = roomSearch.value.toLowerCase().trim(); const rooms = state.rooms.filter((room) => String(room.roomNumber).toLowerCase().includes(query) || room.members.some((name) => name.toLowerCase().includes(query))); document.querySelector("#rooms-list").innerHTML = roomCards(rooms); document.querySelector("#room-count").textContent = `${rooms.length} ${rooms.length === 1 ? "room" : "rooms"}`; });
   const carSearch = document.querySelector("#car-search");
