@@ -1,3 +1,6 @@
-data/.backups/
 *.tmp
 .DS_Store
+.env*
+.vercel
+data/.backups/
+node_modules/
