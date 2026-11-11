@@ -51,47 +51,16 @@ You can also **download** the JSON files from the Save & publish section and rep
 
 Each employee's car and room are worked out from `rooms.json` and `cars.json`; the editor also writes them into `employees.json` when saving so the files stay consistent.
 
-## Photo & video gallery (Azure Blob Storage)
+## Photo & video gallery (OneDrive)
 
-The **Gallery** page lets the team upload photos and videos (up to 2 GB each by default) and browse them in a grid with a full-screen viewer. Files go **straight from the browser to Azure Blob Storage**; the small server function [`api/gallery.js`](./api/gallery.js) on Vercel only checks the team code and hands out short-lived upload/view links. The storage key never reaches the browser or GitHub.
+The **Gallery** page has two buttons: **Upload** (a OneDrive *Request files* link — people can add files without seeing the folder) and **Browse** (a shared link to the same folder). There's also a "Share your memories" banner on the home page. No extra hosting or cost: files live in your OneDrive.
 
-Expected cost for 50 GB: about **$1–2/month** (Hot tier storage ≈ $0.02/GB; the first 100 GB of downloads each month are free).
+### Set it up (about 5 minutes)
 
-### One-time setup (about 10 minutes)
+1. In **OneDrive** (work account), create a folder, e.g. `Noida Outing 2026 – Photos`.
+2. **Upload link:** select the folder → **⋯** → **Request files** → (optionally describe what to upload) → **Next** → **Copy link**.
+   *If "Request files" isn't offered, your organisation has turned it off — use a sharing link with **Can edit** instead (people can then also see and change the folder).*
+3. **Browse link:** select the same folder → **Share** → **Link settings** → choose **People in your organisation** (recommended) or **Specific people** → **Can view** → **Copy link**.
+4. Open the editor → **Photo gallery** → paste both links → **Save & publish**.
 
-1. **Azure portal → Storage accounts → Create**
-   - Subscription / resource group: your choice (e.g. new group `noida-outing`)
-   - Storage account name: e.g. `noidaoutingmedia` (lowercase, globally unique)
-   - Region: **Central India** · Performance: **Standard** · Redundancy: **LRS**
-   - Advanced tab: leave **"Allow enabling anonymous access on individual containers" off** (files stay private)
-   - Review + create.
-2. **Copy the connection string:** storage account → **Security + networking → Access keys** → *Show* → copy **Connection string** (key1).
-3. **Vercel → noida-morale-outing → Settings → Environment Variables**, add (for *Production* and *Preview*):
-
-   | Name | Value |
-   | --- | --- |
-   | `AZURE_STORAGE_CONNECTION_STRING` | the connection string from step 2 |
-   | `GALLERY_UPLOAD_CODE` | the team code people type to upload (share it on Teams/WhatsApp) |
-   | `GALLERY_ADMIN_CODE` | a different, longer code for deleting uploads in the editor |
-   | `GALLERY_VIEW_CODE` | *optional* – set it to require a code just to view; leave unset for public viewing |
-   | `GALLERY_QUOTA_GB` | *optional* – default `50` |
-   | `GALLERY_MAX_FILE_MB` | *optional* – default `2048` |
-
-4. **Redeploy:** Vercel → Deployments → ⋯ on the latest → **Redeploy** (environment variables only apply to new deployments).
-5. Open the site's **Gallery** page and upload a test photo. The first request automatically creates the private `gallery` container and allows browser uploads (CORS) on the storage account.
-
-Recommended extras in the Azure portal:
-- **Budget alert:** Cost Management → Budgets → e.g. $5/month with an email alert (Azure has no hard 50 GB stop; the app enforces the quota).
-- **Cheaper storage for old files:** storage account → **Data management → Lifecycle management** → rule: base blobs last modified more than 30 days ago → *Move to cool storage*.
-
-### Managing uploads
-
-Editor → **Photo gallery → Manage uploads** → enter the admin code → open or delete any file. Gallery texts, the home-page banner and tips are edited in the same section.
-
-### Local testing
-
-```bash
-npm run dev     # http://localhost:3000 — site + gallery API, settings from .env.local
-```
-
-`.env.local` (never committed) holds the same variables as Vercel. To test without Azure, run the [Azurite](https://learn.microsoft.com/azure/storage/common/storage-use-azurite) emulator and use its development connection string.
+Leave a link empty to show "Link coming soon". Hide the whole page under **Site & branding → Top menu**.

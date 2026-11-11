@@ -90,11 +90,12 @@ const SECTIONS = [
     { title: "Important information panel", base: "site.pages.home", fields: [T("infoEyebrow", "Eyebrow"), T("infoTitle", "Title"), T("infoLink", "Link text", { wide: true }), { type: "strings", abs: "event.importantInstructions", label: "Instructions", addLabel: "Add instruction" }] },
     { title: "Route banner", base: "site.pages.home", collapsed: true, fields: [T("routeEyebrow", "Eyebrow"), T("routeButton", "Button label")] },
   ] },
-  { id: "gallery", group: "Website", title: "Photo gallery", route: "gallery", desc: "Upload & gallery page. Files are stored in Azure Blob Storage; codes and limits live in Vercel settings.", groups: [
-    { title: "Gallery page", base: "site.pages.gallery", fields: [T("eyebrow", "Small heading (eyebrow)"), T("title", "Page title"), TA("lede", "Intro text", { wide: true }), T("uploadTitle", "Upload box title", { wide: true }), TA("uploadText", "Upload box text", { wide: true }), { type: "strings", key: "tips", label: "Tips under the upload box", addLabel: "Add tip" }, T("emptyText", "Text when there are no photos yet", { wide: true }), URLF("apiBase", "Gallery server address (for the GitHub Pages copy)", { help: "The GitHub Pages copy of the site has no server, so it uses this Vercel address for uploads. Leave as is." })] },
+  { id: "gallery", group: "Website", title: "Photo gallery", route: "gallery", desc: "Gallery page with OneDrive links: one for uploading, one for browsing.", groups: [
+    { title: "OneDrive links", base: "site.pages.gallery", help: "Upload link: in OneDrive, open the folder → ⋯ → Request files → copy the link. Browse link: same folder → Share → choose who can view → Copy link. Leave a link blank to show “Link coming soon”.", fields: [URLF("uploadUrl", "Upload link (OneDrive “Request files”)", { placeholder: "https://…sharepoint.com/:f:/…" }), URLF("viewUrl", "Browse link (shared folder)", { placeholder: "https://…sharepoint.com/:f:/…" }), T("deadline", "Deadline note (optional)", { wide: true, placeholder: "e.g. Please upload by 30 December" })] },
+    { title: "Upload & browse boxes", base: "site.pages.gallery", fields: [T("uploadTitle", "Upload box — title"), T("uploadButton", "Upload box — button"), TA("uploadText", "Upload box — text", { wide: true }), T("viewTitle", "Browse box — title"), T("viewButton", "Browse box — button"), TA("viewText", "Browse box — text", { wide: true }), T("comingSoonText", "Button text when a link is missing", { wide: true })] },
+    { title: "Tips & note", base: "site.pages.gallery", collapsed: true, fields: [T("tipsTitle", "Tips title", { wide: true }), { type: "strings", key: "tips", label: "Tips", addLabel: "Add tip" }, T("accessNote", "Note under the boxes", { wide: true })] },
     { title: "Home page banner", base: "site.pages.gallery", fields: [CB("showOnHome", "Show the “Share your memories” banner on the home page"), T("homeButton", "Button label"), T("homeTitle", "Title", { wide: true }), T("homeText", "Text", { wide: true })] },
-    { title: "Manage uploads", base: "", help: "Review and delete uploaded photos and videos. Needs the admin code (GALLERY_ADMIN_CODE in Vercel).", fields: [{ type: "galleryAdmin" }] },
-    { title: "Codes & limits", base: "", collapsed: true, fields: [{ type: "note", wide: true, text: "For security these aren't stored in the website files. Set them in Vercel → noida-morale-outing → Settings → Environment Variables, then redeploy: AZURE_STORAGE_CONNECTION_STRING (required), GALLERY_UPLOAD_CODE (required), GALLERY_VIEW_CODE (optional — blank lets anyone view), GALLERY_ADMIN_CODE (for deleting), GALLERY_QUOTA_GB (default 50), GALLERY_MAX_FILE_MB (default 2048)." }] },
+    pageText("gallery"),
   ] },
   { id: "event", group: "Outing", title: "Event details", route: "home", desc: "Date, departure, timings and emergency contact used across the site.", groups: [
     { title: "Basics", base: "event", fields: [T("name", "Event name", { wide: true }), { type: "date", key: "date", label: "Event date" }, T("departure", "Departure (reporting point)"), T("destination", "Destination", { wide: true }), T("reportingTime", "Reporting time"), T("departureTime", "Departure time"), T("arrivalTime", "Expected arrival time")] },
@@ -148,7 +149,14 @@ const SECTIONS = [
 
 /* ---------- validation ---------- */
 function warnings() {
-  const out = { team: [], rooms: [], cars: [] };
+  const out = { team: [], rooms: [], cars: [], gallery: [] };
+  const g = data.site.pages?.gallery || {};
+  if (g.visible !== false) {
+    const bad = (u) => u && !/^https?:\/\//i.test(u);
+    if (!g.uploadUrl) out.gallery.push("No upload link yet — the Upload button shows “Link coming soon”.");
+    if (!g.viewUrl) out.gallery.push("No browse link yet — the Browse button shows “Link coming soon”.");
+    if (bad(g.uploadUrl) || bad(g.viewUrl)) out.gallery.push("Links must start with https:// — invalid links are hidden on the site.");
+  }
   const all = new Set(names());
   const seen = new Set();
   data.employees.forEach((p) => {
@@ -205,7 +213,6 @@ function renderField(f, base) {
   const id = `f${uid++}`;
   switch (f.type) {
     case "note": return h("div", { class: `field${f.wide ? " wide" : ""}` }, h("span", { class: "help", style: "padding-top:8px;font-size:12px" }, f.text));
-    case "galleryAdmin": return renderGalleryAdmin();
     case "text": case "url": case "tel": case "date": case "number": {
       const input = h("input", { id, type: f.type, value: getPath(path) ?? "", "data-path": path, min: f.min, placeholder: f.placeholder,
         oninput: (e) => { setPath(path, f.type === "number" ? (e.target.value === "" ? 0 : Number(e.target.value)) : e.target.value); changed(); },
@@ -324,43 +331,6 @@ function renderEmployees() {
       h("button", { class: "add-btn", type: "button", onclick: addPeople }, "+ Add several")));
 }
 
-/* ---------- gallery moderation ---------- */
-const galleryAdmin = { code: "", items: null, used: 0, quota: 0, error: "" };
-const galleryApi = () => (window.location.hostname.endsWith("github.io") && data.site.pages?.gallery?.apiBase ? data.site.pages.gallery.apiBase.replace(/\/+$/, "") : "");
-async function galleryCall(action, body) {
-  const res = await fetch(`${galleryApi()}/api/gallery?action=${action}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-  const out = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(out.error || `Request failed (${res.status})`);
-  return out;
-}
-const fmtBytes = (n) => (n >= 1024 ** 3 ? `${(n / 1024 ** 3).toFixed(1)} GB` : `${Math.max(0, n / 1024 ** 2).toFixed(n > 1024 ** 2 ? 0 : 1)} MB`);
-async function loadGalleryAdmin() {
-  galleryAdmin.error = "";
-  try {
-    const out = await galleryCall("list", { code: galleryAdmin.code });
-    if (!out.isAdmin) throw new Error("That isn't the admin code");
-    Object.assign(galleryAdmin, { items: out.items, used: out.usedBytes, quota: out.quotaBytes });
-  } catch (err) { galleryAdmin.items = null; galleryAdmin.error = err.message; }
-  renderEditor();
-}
-function renderGalleryAdmin() {
-  const g = galleryAdmin;
-  const codeInput = h("input", { type: "password", value: g.code, placeholder: "Admin code", autocomplete: "off", oninput: (e) => { g.code = e.target.value.trim(); }, onkeydown: (e) => { if (e.key === "Enter") { e.preventDefault(); loadGalleryAdmin(); } } });
-  return h("div", { class: "field wide" },
-    h("div", { class: "panel-actions" }, h("div", { style: "flex:1;min-width:180px" }, codeInput), h("button", { class: "btn", type: "button", onclick: loadGalleryAdmin }, g.items ? "↻ Refresh" : "Load uploads")),
-    g.error ? h("p", { class: "help", style: "color:var(--red)" }, g.error) : null,
-    g.items ? h("p", { class: "help" }, `${g.items.length} files · ${fmtBytes(g.used)} of ${fmtBytes(g.quota)} used`) : null,
-    g.items ? h("div", { class: "media-admin" }, g.items.map((it) => h("div", { class: "media-admin-item" },
-      it.thumb || it.type === "image" ? h("img", { src: it.thumb || it.url, alt: "", loading: "lazy" }) : h("span", { class: "media-admin-ph" }, "▶"),
-      h("div", { class: "media-admin-meta" }, h("b", {}, it.title), h("span", {}, `${it.uploader || "Unknown"} · ${fmtBytes(it.size)}${it.type === "video" ? " · video" : ""}`)),
-      h("a", { class: "icon-btn", href: it.url, target: "_blank", rel: "noopener", title: "Open" }, "↗"),
-      h("button", { class: "icon-btn del", type: "button", title: "Delete", onclick: async () => {
-        if (!confirm(`Delete “${it.title}” uploaded by ${it.uploader || "unknown"}? This can't be undone.`)) return;
-        try { await galleryCall("delete", { code: g.code, name: it.name }); toast("Deleted"); } catch (err) { toast(err.message, true); }
-        loadGalleryAdmin();
-      } }, "✕")))) : null);
-}
-
 /* ---------- section rendering ---------- */
 function renderSidebar() {
   const w = warnings();
@@ -374,6 +344,10 @@ function renderSidebar() {
       s.title, issues ? h("span", { class: "badge", title: `${issues} to check` }, issues) : s.count ? h("span", { class: "count" }, s.count()) : null));
   });
 }
+function warningsBox(id) {
+  const w = warnings()[id] || [];
+  return h("div", { class: "warnings", "data-warnings": id, hidden: !w.length }, h("b", {}, `${w.length} thing${w.length === 1 ? "" : "s"} to check`), h("ul", {}, w.map((m) => h("li", {}, m))));
+}
 function renderEditor() {
   const editor = $("#editor");
   const scroll = editor.scrollTop;
@@ -384,8 +358,7 @@ function renderEditor() {
   if (restoredDraft && isDirty()) editor.append(h("div", { class: "notice warn" }, h("span", {}, "Restored unsaved edits from this browser. They're not on the live site until you save or publish."),
     h("button", { class: "btn small", type: "button", onclick: () => go("publish") }, "Save & publish"),
     h("button", { class: "btn small danger", type: "button", onclick: discardChanges }, "Discard")));
-  const w = warnings()[section.id];
-  if (w?.length) editor.append(h("div", { class: "warnings" }, h("b", {}, `${w.length} thing${w.length === 1 ? "" : "s"} to check`), h("ul", {}, w.map((m) => h("li", {}, m)))));
+  editor.append(warningsBox(section.id));
   if (section.custom) section.custom(editor);
   else section.groups.forEach((g) => {
     const key = `${section.id}:${g.title}`;
@@ -413,7 +386,11 @@ function go(id) {
 const isDirty = () => JSON.stringify(data) !== baselineStr;
 function changed(structural = false) {
   if (structural) renderEditor();
-  else document.querySelectorAll("[data-card]").forEach((c) => c._refresh?.());
+  else {
+    document.querySelectorAll("[data-card]").forEach((c) => c._refresh?.());
+    const box = document.querySelector("[data-warnings]");
+    if (box) box.replaceWith(warningsBox(box.dataset.warnings));
+  }
   renderSidebar();
   updateStatus();
   schedulePreview();
